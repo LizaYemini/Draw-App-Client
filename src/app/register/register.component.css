@@ -1,0 +1,52 @@
+body{
+    background-image: url('http://getwallpapers.com/wallpaper/full/f/5/2/235402.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100%;
+    font-family: 'Numans', sans-serif;
+}
+
+.container{
+    height: 100%;
+    align-content: center;
+}
+
+.card{
+    height: 550px;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 400px;
+    background-color: rgba(0,0,0,0.5);
+}
+
+label{
+    color: white;
+}
+.card-header h2{
+    color: white;
+    font-size: x-large;
+}
+
+.login_btn{
+    margin-top: 20px;
+    color: white;
+    background-color: rgb(68, 55, 255);
+    width: 100px;
+}
+
+
+.input-group{
+    margin-bottom: 18px;
+}
+.error-msg{
+    color: red;
+}
+
+.info-msg{
+    color: white;
+}
+
+.form-control.ng-untouched,
+.form-control.ng-invalid {
+    border-color: red !important;
+}

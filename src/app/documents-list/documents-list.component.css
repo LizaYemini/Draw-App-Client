@@ -1,0 +1,31 @@
+body{
+    background-image: url('http://getwallpapers.com/wallpaper/full/f/5/2/235402.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 130%;
+    font-family: 'Numans', sans-serif;
+    color: white;
+}
+
+thead {
+    color: gray;
+}
+ tbody {
+     color: white;
+ }
+
+ .my-custom-scrollbar {
+    position: relative;
+    height: 800px;
+    overflow: auto;
+}
+.table-wrapper-scroll-y {
+display: block;
+}
+
+#closeEditDoc {
+    margin-top: 5px;
+    margin-left: 10px;
+    color: #fff; 
+    opacity: 1;
+}

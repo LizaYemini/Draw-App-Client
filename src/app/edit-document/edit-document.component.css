@@ -1,0 +1,30 @@
+body {
+    background-image: url('http://getwallpapers.com/wallpaper/full/f/5/2/235402.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 160%;
+    font-family: 'Numans', sans-serif;
+    color:white;
+}
+
+.image-upload-container {
+    cursor: pointer;
+    margin-left:100px;
+}
+
+.img-select-container {
+    margin-left:100px;
+}
+
+
+ #img-selection {
+    width: 40%;
+    height: 40% !important; 
+    position: relative;
+ }
+
+ #docName {
+    cursor: pointer;
+    margin-bottom: 30px;
+    margin-left:100px;
+ }

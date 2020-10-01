@@ -1,0 +1,65 @@
+<body *ngIf="!selectedDocToEdit">
+    <div class="container">
+        <table class="table-wrapper-scroll-y my-custom-scrollbar table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Document Name</th>
+                    <th>Owner User Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let document of documents; let i = index">
+                    <td>{{i + 1}}</td>
+                    <td>{{ document.documentName }}</td>
+                    <td>{{ document.owner }}</td>
+                    <td>
+                        &nbsp;
+                        <a><i class="fa fa-pencil" type="button"
+                                (click)="editDoc(document)">&nbsp;&nbsp;&nbsp;&nbsp;</i></a>
+                        <a><i class="fa fa-trash" type="button" *ngIf="document.owner == this.userId"
+                                (click)="removeDoc(document)">&nbsp;&nbsp;&nbsp;&nbsp; </i></a>
+                        <a><i class="fa fa-share-alt" type="button" *ngIf="document.owner == this.userId"
+                                (click)="shareDoc(document)" data-toggle="modal"
+                                data-target="#showDocShareModal"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+
+<div class="float-left" *ngIf="selectedDocToEdit">
+    <button type="button" class="close" aria-label="Close" (click)="closeEditDoc()">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+
+<app-edit-document *ngIf="selectedDocToEdit" [docId]=this.selectedDocToEdit.docId
+    [docName]=this.selectedDocToEdit.documentName [choseName]=true [selectedFileUrl]=this.selectedDocToEdit.imageUrl
+    [owner]=this.selectedDocToEdit.owner>
+</app-edit-document>
+
+
+<div *ngIf="selectedDocToShare" class="modal fade" id="showDocShareModal" tabindex="-1" role="dialog"
+    aria-labelledby="showDocShareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                Edit shares for the document: '{{selectedDocToShare.documentName}}'
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <app-share-docs [chosenDocId]=this.selectedDocToShare.docId [userId]=this.userId></app-share-docs>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    (click)="closeShareDoc()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

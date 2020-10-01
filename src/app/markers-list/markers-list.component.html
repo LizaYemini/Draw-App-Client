@@ -1,0 +1,18 @@
+<!--<div class="my-custom-scrollbar my-custom-scrollbar-primary">
+    <ul>
+        <li *ngFor="let marker of markers | keyvalue">
+            {{marker.key}}
+        </li>
+    </ul>
+</div> -->
+
+<perfect-scrollbar>
+    <ul class="markers">
+        <li (click)="onSelect(null)"> Clear Select</li>
+        <li *ngFor="let marker of markers | keyvalue" [class.selected]="marker === selectedMarkerShow"
+            (click)="onSelect(marker)">
+            {{marker.key}}
+            <a><i class="fa fa-trash float-right" type="button" (click)="removeMarker(marker.key)"></i></a>
+        </li>
+    </ul>
+</perfect-scrollbar>

@@ -1,0 +1,50 @@
+
+body{
+    background-image: url('http://getwallpapers.com/wallpaper/full/f/5/2/235402.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100%;
+    font-family: 'Numans', sans-serif;
+}
+
+.container{
+    height: 100%;
+    align-content: center;
+}
+
+.card{
+    height: 370px;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 450px;
+    background-color: rgba(0,0,0,0.5);
+}
+
+label{
+    color: white;
+}
+.card-header h2{
+    color: white;
+    font-size: x-large;
+}
+
+.login_btn{
+    margin-top: 20px;
+    color: white;
+    background-color: rgb(68, 55, 255);
+    width: 100px;
+}
+
+.login_btn:hover{
+    color: black;
+    background-color: white;
+}
+
+h4 {
+    color: grey;
+    font-size: small;
+}
+
+.error-msg{
+    color: red;
+}

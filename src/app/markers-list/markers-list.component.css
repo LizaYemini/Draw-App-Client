@@ -1,0 +1,40 @@
+perfect-scrollbar {
+    margin-top:30px;
+    max-width: 400px;
+    max-height: 500px;
+}
+
+.markers {
+    /*
+    margin: 0 0 2em 0; */
+    list-style-type: none;
+    padding: 0;
+    /*
+    width: 15em; */
+    width: 350px
+  }
+  .markers li {
+    cursor: pointer;
+    position: relative;
+    left: 0;
+    background-color: #EEE;
+    color: gray;
+    font-size: small;
+    margin: .5em;
+    padding: .3em 0;
+    height: 1.6em; 
+    border-radius: 4px;
+  }
+  .markers li:hover {
+    color: #607D8B;
+    background-color: #DDD;
+    left: .1em;
+  }
+  .markers li.selected {
+    background-color: #CFD8DC;
+    color: blue;
+  }
+  .markers li.selected:hover {
+    background-color: #BBD8DC;
+    color: white;
+  }

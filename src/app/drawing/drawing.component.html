@@ -1,0 +1,44 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="img-container">
+
+                        <button (click)="changeShape('Ellipse')">Ellipse</button>
+                        <button (click)="changeShape('Rectangle')">Rectangle</button>
+
+                        <div class="img-preview-container">
+                            <div *ngIf="imgUrl" class="img-preview"
+                                [ngStyle]="{'background-image': 'url('+ imgUrl + ')'}">
+                            </div>
+                            <canvas #shapeCanvas class='canvas'></canvas>
+                            <canvas #stickingOutCanvas class='canvas'></canvas>
+                            <canvas #drawingCanvas class='canvas'></canvas>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <app-markers-list [markers]=this.markersList (selectedMarker)="onChooseMarker($event)">
+                    </app-markers-list>
+                </div>
+            </div>
+            <br> <br>
+            <div class="row colors-choose">
+                <div class="col-md-3">
+                    <p>Choose background color:</p>
+                    <color-chrome (onChangeComplete)="handleChangeBackColor($event)"></color-chrome>
+                </div>
+                <div class="col-md-3">
+                    <p>Choose foreground color:</p>
+                    <color-chrome (onChangeComplete)="handleChangeForeColor($event)"></color-chrome>
+                </div>
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-3">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

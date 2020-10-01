@@ -1,0 +1,16 @@
+<body>
+    <h2>Already Shared With:</h2>
+    <div class="list-group" *ngFor="let user of alreadySharedUsers">
+        <li class="list-group-item list-group-item-action">
+            {{user}} &nbsp;&nbsp;&nbsp;&nbsp;
+            <a><i class="fa fa-trash" type="button" (click)="removeShare(user)"></i></a>
+        </li>
+    </div>
+
+    <h2>Click on the users you want to share the doc with:</h2>
+    <div class="list-group" *ngFor="let user of notSharedUsers">
+        <button type="button" class="list-group-item list-group-item-action" (click)="createShare(user)">
+            {{user}}
+        </button>
+    </div>
+</body>

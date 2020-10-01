@@ -1,0 +1,27 @@
+<body>
+    <br>
+    <div id="docName">
+        <input type="text" (keyup)=getDocName($event) [value]="this.docName">
+        <br>
+        <button (click)="updateName()">update file name</button>
+    </div>
+
+    <div *ngIf="choseName">
+        <label class="image-upload-container btn btn-bwm">
+            <input #imageInput type="file" accept="image/*" (change)="processFile(imageInput)">
+        </label>
+        <div class="img-select-container">
+            <h4>Or choose picture from this options:</h4>
+            <mat-form-field appearance="fill">
+                <mat-select (selectionChange)="selected($event)">
+                    <mat-option *ngFor="let image of imagesSelect" [value]="image">
+                        <img src='{{image}}' id="img-selection"> {{image}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <app-drawing [imgUrl]=selectedFileUrl [userId]=this.userId [docId]=this.docId>
+        </app-drawing>
+    </div>
+</body>

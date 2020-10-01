@@ -1,0 +1,55 @@
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-center h-100">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Register</h2>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+                            <input type="text" class="form-control" formControlName="name"
+                                placeholder="name">
+                        </div>
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-at"></i></span>
+                            </div>
+                            <input type="email" class="form-control" id="username" formControlName="username"
+                                placeholder="email">
+                                <!--
+                            <div class="invalid-feedback">
+                                <div>invalid email</div>
+                            </div>
+                            -->
+                        </div>
+                        <div *ngIf="username.errors?.required" class="error-msg">user name is required!</div>
+                        <div *ngIf="username.errors?.email" class="error-msg">not a valid mail</div>
+                        <div *ngIf="username.invalid && username.dirty && !(username.errors?.required) && !(username.errors?.email)" class="error-msg">
+                            <strong>{{ username.value }}</strong> is already taken
+                          </div>
+                          <div *ngIf="username.valid && !(username.errors?.required) && !(username.errors?.email)" class="info-msg">
+                            <strong>{{ username.value }}</strong> is available
+                          </div>
+                        
+                          <div *ngIf="username.pending && !(username.errors?.required) && !(username.errors?.email)" class="info-msg">
+                            Hold tight... Checking availability of <strong>{{ username.value }}</strong>
+                          </div>
+                        <button type="submit" class="btn btn-primary float-right login_btn"
+                            [disabled]="!registerForm.valid">
+                            Register
+                        </button>
+
+                    </form>
+                    <div *ngIf="errorMsg!=''" class="error-msg">
+                        {{errorMsg}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

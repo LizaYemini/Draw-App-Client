@@ -1,0 +1,15 @@
+<div class="topnav">
+    <div *ngIf="!userName">
+        <a class="nav-link" routerLink="login">Sign In</a>
+    </div>
+    <div *ngIf="userName">
+        <a class="nav-link" routerLink="documents-list">Documents</a>
+        <a class="nav-link" routerLink="edit-document">Add Document</a>
+        <div class="topnav-right">
+            <a (click)="signOut()" routerLink="login">sign out</a>
+        </div>
+        <div class="topnav-right" id="signInAs">
+            Sign in as <b>{{userName}}</b>
+        </div>
+    </div>
+</div>
