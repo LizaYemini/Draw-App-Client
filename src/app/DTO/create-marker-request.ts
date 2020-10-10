@@ -1,5 +1,8 @@
+import { MarkerDto } from './marker-dto';
 
 export class CreateMarkerRequest {
+    "Marker": MarkerDto
+    /*
     "DocId": string
     "MarkerId": string
     "MarkerType": string
@@ -10,4 +13,5 @@ export class CreateMarkerRequest {
     "LocationY": number
     "Width": number
     "Height": number
+    */
 }

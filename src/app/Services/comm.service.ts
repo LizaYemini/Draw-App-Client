@@ -15,7 +15,6 @@ import { CreateShareRequest } from '../DTO/create-share-request';
 import { CreateMarkerRequest } from '../DTO/create-marker-request';
 import { RemoveMarkerRequest } from '../DTO/remove-marker-request';
 import { GetMarkersRequest } from '../DTO/get-markers-request';
-import { UpdateMarkerRequest } from '../DTO/update-marker-request';
 
 @Injectable({
   providedIn: 'root'
@@ -41,5 +40,5 @@ export abstract class CommService {
   abstract CreateMarker(request: CreateMarkerRequest): Observable<any>
   abstract RemoveMarker(request: RemoveMarkerRequest): Observable<any>
   abstract GetMarkers(request: GetMarkersRequest): Observable<any>
-  abstract UpdateMarker(request: UpdateMarkerRequest): Observable<any>
+  abstract UpdateMarker(request: CreateMarkerRequest): Observable<any>
 }

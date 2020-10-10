@@ -1,12 +1,12 @@
 export class MarkerDto {
-    "DocId": string
-    "MarkerId": string
-    "MarkerType": string
-    "ForColor": string
-    "BackColor": string
-    "UserId": string
-    "LocationX": number
-    "LocationY": number
-    "Width": number
-    "Height": number
+    "docId": string
+    "markerId": string
+    "markerType": string
+    "forColor": string
+    "backColor": string
+    "userId": string
+    "locationX": number
+    "locationY": number
+    "width": number
+    "height": number
 }

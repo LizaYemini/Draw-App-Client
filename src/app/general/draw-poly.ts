@@ -1,4 +1,5 @@
 export class DrawPoly {
+    public shapeType: string
     constructor(public LocationX: number, public LocationY: number, public Width: number, public Height: number,
         public foreColor: string, public backColor: string) { }
 

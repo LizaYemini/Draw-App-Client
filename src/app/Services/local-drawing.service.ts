@@ -1,24 +1,26 @@
 import { Injectable } from '@angular/core';
 import { fromEvent, interval, Subject } from 'rxjs';
 import { buffer, switchMap, takeUntil } from 'rxjs/operators';
+import { CreateMarkerRequest } from '../DTO/create-marker-request';
+import { MarkerDto } from '../DTO/marker-dto';
 import { DrawPoly } from '../general/draw-poly';
-import { DrawPolyEllipse } from '../general/draw-poly-ellipse';
-import { DrawPolyRectangle } from '../general/draw-poly-rectangle';
 import { FreeDrawLine } from '../general/free-draw-line';
 import { point } from '../general/point';
 import { DrawingService } from './drawing.service';
+import { MarkerFactoryService } from './marker-factory.service';
+import { MarkerMessangerService } from './marker-messanger.service';
 import { SharedDataService } from './shared-data.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocalDrawingService {
-  ResponseSubjects = {
+  responseSubjects = {
     FreeDraw: new Subject<any>(),
     DrawPoly: new Subject<any>(),
     ClearPoly: new Subject<any>(),
     MarkersList: new Subject<any>(),
-    AppResponseError: new Subject<any>(),
+    AppMarkerDtoError: new Subject<any>(),
     ClearDrawingCanvas: new Subject<any>(),
     ClearShapeCanvas: new Subject<any>()
   }
@@ -41,95 +43,14 @@ export class LocalDrawingService {
 
   poly: Subject<point>
 
-  constructor(private drawingService: DrawingService, private sharedDataService: SharedDataService) {
+  constructor(private drawingService: DrawingService, private markerMessangerService: MarkerMessangerService, private sharedDataService: SharedDataService,
+    private markerFactory: MarkerFactoryService) {
+    markerMessangerService.startSocket()
     this.poly = new Subject<point>()
     this.sharedDataService.currentMessage.subscribe(msg => {
       this.userId = msg
     })
     this.SubscribeOnSubjects()
-  }
-
-
-  SubscribeOnSubjects() {
-    this.drawingService.onError().subscribe
-      (
-        message => {
-          this.ResponseSubjects.AppResponseError.next(message)
-        }
-      )
-    this.drawingService.onCreateMarkerResponseOk().subscribe
-      (
-        response => {
-          var poly = this.makePolyFromResponse(response)
-          //this.ResponseSubjects.DrawPoly.next(poly)
-          this.handleNewMarker(response.markerId, poly)
-          //this.drawAllMarkers()
-        }
-      )
-
-    this.drawingService.onGetMarkersResponseOk().subscribe
-      (
-        response => {
-          this.allMarkers = new Map<string, DrawPoly>()
-          this.ResponseSubjects.ClearShapeCanvas.next("")
-          response.markers.forEach(element => {
-            var tempPoly = this.makePolyFromResponse(element)
-
-            this.allMarkers.set(element.markerId, tempPoly)
-            //this.ResponseSubjects.DrawPoly.next(tempPoly)
-          });
-          this.drawAllMarkers()
-          //this.ResponseSubjects.MarkersList.next(this.allMarkers)
-        }
-      )
-    this.drawingService.onRemoveMarkerResponseOk().subscribe
-      (
-        response => {
-          //console.log(response)
-          this.ResponseSubjects.ClearPoly.next(
-            this.allMarkers.get(response.markerId)
-          )
-          //this.onClearDrawingCanvas()
-          this.allMarkers.delete(response.markerId)
-          this.ResponseSubjects.ClearShapeCanvas.next("")
-          this.drawAllMarkers()
-          console.log("removed marker ok")
-        }
-      )
-
-    this.drawingService.onUpdateMarkerResponseOk().subscribe
-      (
-        response => {
-
-          var poly = this.makePolyFromResponse(response)
-          this.handleNewMarker(response.markerId, poly)
-          //this.allMarkers.get(response.markerId).changeForeColor(response.ForColor)
-          //this.allMarkers.get(response.markerId).changeBackColor(response.BackColor)
-          //this.reDrawMarkers()
-        }
-      )
-  }
-  onClearDrawingCanvas(): Subject<any> {
-    return this.ResponseSubjects.ClearDrawingCanvas
-  }
-
-  onClearShapeCanvas(): Subject<any> {
-    return this.ResponseSubjects.ClearShapeCanvas
-  }
-  onFreeDraw(): Subject<any> {
-    //return this.ResponseSubjects.FreeDraw
-    return this.ResponseSubjects.FreeDraw
-  }
-
-  onDrawPoly(): Subject<any> {
-    return this.ResponseSubjects.DrawPoly
-  }
-
-  onMarkersList(): Subject<any> {
-    return this.ResponseSubjects.MarkersList
-  }
-  onError(): Subject<any> {
-    return this.ResponseSubjects.AppResponseError
   }
 
   freeDraw(evt) {
@@ -141,10 +62,108 @@ export class LocalDrawingService {
     var from: point = new point(xcanvas - evt.movementX, ycanvas - evt.movementY)
     var to: point = new point(xcanvas, ycanvas)
     var line: FreeDrawLine = new FreeDrawLine(from, to, this.foreColor)
-    this.ResponseSubjects.FreeDraw.next(line)
+    this.responseSubjects.FreeDraw.next(line)
     //update poly
     this.poly.next(new point(xcanvas - evt.movementX, ycanvas - evt.movementY))
   }
+  // START SUBSCRIBE
+  SubscribeOnSubjects() {
+    this.markerMessangerService.onNewMarkerResponse().subscribe
+      (
+        response => {
+          console.log(" response in new marker ")
+          console.log(response)
+          var poly = this.markerFactory.makePolyFromMarkerDto(response.marker as MarkerDto)
+          this.handleNewMarker(response.marker.markerId, poly)
+          //console.log(marker.DocId)
+        }
+      )
+    this.markerMessangerService.onRemoveMarkerResponse().subscribe
+      (
+        MarkerDto => {
+          console.log(MarkerDto)
+        }
+      )
+
+    this.drawingService.onError().subscribe
+      (
+        message => {
+          this.responseSubjects.AppMarkerDtoError.next(message)
+        }
+      )
+    this.drawingService.onCreateMarkerResponseOk().subscribe
+      (
+        response => {
+          var poly = this.markerFactory.makePolyFromMarkerDto(response.marker as MarkerDto)
+          this.handleNewMarker(response.marker.markerId, poly)
+        }
+      )
+
+    this.drawingService.onGetMarkersResponseOk().subscribe
+      (
+        response => {
+          this.allMarkers = new Map<string, DrawPoly>()
+          this.responseSubjects.ClearShapeCanvas.next("")
+          response.markers.forEach(element => {
+            var tempPoly = this.markerFactory.makePolyFromMarkerDto(element)
+
+            this.allMarkers.set(element.markerId, tempPoly)
+            //this.MarkerDtoSubjects.DrawPoly.next(tempPoly)
+          });
+          this.drawAllMarkers()
+          //this.MarkerDtoSubjects.MarkersList.next(this.allMarkers)
+        }
+      )
+    this.drawingService.onRemoveMarkerResponseOk().subscribe
+      (
+        response => {
+          //console.log(MarkerDto)
+          this.responseSubjects.ClearPoly.next(
+            this.allMarkers.get(response.markerId)
+          )
+          //this.onClearDrawingCanvas()
+          this.allMarkers.delete(response.markerId)
+          this.responseSubjects.ClearShapeCanvas.next("")
+          this.drawAllMarkers()
+          console.log("removed marker ok")
+        }
+      )
+
+    this.drawingService.onUpdateMarkerResponseOk().subscribe
+      (
+        response => {
+          var poly = this.markerFactory.makePolyFromMarkerDto(response.marker as MarkerDto)
+          this.handleNewMarker(response.marker.markerId, poly)
+        }
+      )
+  } // END SUBSCRIBE
+
+  // START ON FUNCTIONS
+  onClearDrawingCanvas(): Subject<any> {
+    return this.responseSubjects.ClearDrawingCanvas
+  }
+
+  onClearShapeCanvas(): Subject<any> {
+    return this.responseSubjects.ClearShapeCanvas
+  }
+  onFreeDraw(): Subject<any> {
+    //return this.MarkerDtoSubjects.FreeDraw
+    return this.responseSubjects.FreeDraw
+  }
+
+  onDrawPoly(): Subject<any> {
+    return this.responseSubjects.DrawPoly
+  }
+
+  onMarkersList(): Subject<any> {
+    return this.responseSubjects.MarkersList
+  }
+  onError(): Subject<any> {
+    return this.responseSubjects.AppMarkerDtoError
+  }
+  // END ON FUNCTIONS
+
+
 
   drawPoly(shape) {
     if (shape.length != 0) {
@@ -158,11 +177,14 @@ export class LocalDrawingService {
       var locationY = center.Y - radius.Y
       var width = radius.X * 2
       var height = radius.Y * 2
-      // send the poly to the server
-      this.createMarkerOnService(height, width, locationX, locationY)
+      var marker = this.markerFactory.createMarkerDto("", this.docId, this.chosenShape, this.foreColor, this.backColor,
+        this.userId, locationX, locationY, width, height)
+      this.createMarkerOnService(marker)
     }
   }
-  startDraw(drawingCanvas: any, shapeCanvas: any) {
+  startDraw(drawingCanvas: any, shapeCanvas: any, docId: string) {
+    this.docId = docId
+    this.drawingService.GetMarkers({ "DocID": this.docId })
     this.drawingCanvas = drawingCanvas
     this.shapeCanvas = shapeCanvas
     var mouseUp$ = fromEvent(drawingCanvas.nativeElement, 'mouseup')
@@ -184,7 +206,7 @@ export class LocalDrawingService {
     this.poly.pipe(
       buffer(mouseUp$)
     ).subscribe(shape => {
-      this.ResponseSubjects.ClearDrawingCanvas.next("")
+      this.responseSubjects.ClearDrawingCanvas.next("")
       this.drawPoly(shape)
     },
       error => this.onError().next(error))
@@ -194,18 +216,55 @@ export class LocalDrawingService {
     this.chosenShape = shape
   }
 
+
+  handleNewMarker(markerId: string, poly: DrawPoly) {
+    this.allMarkers.set(markerId, poly)
+    // draw the new marker
+    this.responseSubjects.DrawPoly.next(poly)
+  }
+
+  reDrawMarkers() {
+    //this.allMarkers = new Map<string, DrawPoly>()
+    this.responseSubjects.ClearShapeCanvas.next("")
+    this.drawAllMarkers()
+  }
+  drawAllMarkers() {
+    this.allMarkers.forEach(poly => {
+      this.responseSubjects.DrawPoly.next(poly)
+    });
+    this.responseSubjects.MarkersList.next(this.allMarkers)
+  }
+
+  createMarkerOnService(marker: MarkerDto) {
+    var request: CreateMarkerRequest = new CreateMarkerRequest
+    request.Marker = marker
+    this.drawingService.CreateMarker(request)
+  }
+
+  UpdateMarkerOnService(marker: MarkerDto) {
+    var request: CreateMarkerRequest = new CreateMarkerRequest
+    request.Marker = marker
+    this.drawingService.UpdateMarker(request)
+  }
+
+  handleChangeInMarker(markerId, forColor, backColor) {
+    var poly = this.allMarkers.get(this.selectedMarkerId)
+    var marker = this.markerFactory.createMarkerDto(this.selectedMarkerId, this.docId, poly.shapeType, this.foreColor, this.backColor, this.userId,
+      poly.LocationX, poly.LocationY, poly.Width, poly.Height)
+    this.UpdateMarkerOnService(marker)
+  }
+
+
+
+
+
+  //START SETTERS
   changeForeColor(color) {
     this.foreColor = color
     if (this.selectedMarkerId != null) {
       console.log(this.selectedMarkerId)
       var marker = this.allMarkers.get(this.selectedMarkerId)
       this.handleChangeInMarker(this.selectedMarkerId, color, marker.backColor)
-      //var marker = this.allMarkers.get(this.selectedMarkerId)
-      //this.drawingService.UpdateMarker
-      //this.drawingService.RemoveMarker({ "MarkerID": this.selectedMarkerId })
-      //this.createMarkerOnService(marker.Height, marker.Width, marker.LocationX, marker.LocationY)
-      //this.allMarkers.get(this.selectedMarkerId).changeForeColor(color)
-      //this.reDrawMarkers()
     }
   }
   changeBackColor(color) {
@@ -213,91 +272,13 @@ export class LocalDrawingService {
     if (this.selectedMarkerId != null) {
       var marker = this.allMarkers.get(this.selectedMarkerId)
       this.handleChangeInMarker(this.selectedMarkerId, marker.foreColor, color)
-      /*
-      console.log(this.selectedMarkerId)
-      var marker = this.allMarkers.get(this.selectedMarkerId)
-      this.drawingService.RemoveMarker({ "MarkerID": this.selectedMarkerId })
-      console.log(marker)
-      this.createMarkerOnService(marker.Height, marker.Width, marker.LocationX, marker.LocationY) */
     }
   }
 
   setSelectedMarkerId(markerId) {
     this.selectedMarkerId = markerId
   }
-  updateDocId(docId) {
-    this.docId = docId
-    this.drawingService.GetMarkers({ "DocID": this.docId })
-    /*const source = interval(2000);
-    source.subscribe(val => {
-      this.drawingService.GetMarkers({ "DocID": this.docId })
-    }); */
-
-  }
-
-  handleNewMarker(markerId: string, poly: DrawPoly) {
-    this.allMarkers.set(markerId, poly)
-    // draw the new marker
-    this.ResponseSubjects.DrawPoly.next(poly)
-  }
-
-  reDrawMarkers() {
-    //this.allMarkers = new Map<string, DrawPoly>()
-    this.ResponseSubjects.ClearShapeCanvas.next("")
-    this.drawAllMarkers()
-  }
-  drawAllMarkers() {
-    this.allMarkers.forEach(poly => {
-      this.ResponseSubjects.DrawPoly.next(poly)
-    });
-    this.ResponseSubjects.MarkersList.next(this.allMarkers)
-  }
-
-  createMarkerOnService(height, width, locationX, locationY) {
-    this.drawingService.CreateMarker({
-      "UserId": this.userId,
-      "DocId": this.docId,
-      "BackColor": this.backColor,
-      "ForColor": this.foreColor,
-      "Height": height,
-      "Width": width,
-      "MarkerType": this.chosenShape,
-      "MarkerId": "",
-      "LocationX": locationX,
-      "LocationY": locationY
-    })
-  }
-
-  handleChangeInMarker(markerId, forColor, backColor) {
-    var marker = this.allMarkers.get(this.selectedMarkerId)
-    this.UpdateMarkerOnService(this.selectedMarkerId, forColor, backColor, marker.Height, marker.Width, marker.LocationX, marker.LocationY)
-  }
-  UpdateMarkerOnService(markerId, forColor, backColor, height, width, locationX, locationY) {
-    this.drawingService.UpdateMarker({
-      "UserId": this.userId,
-      "DocId": this.docId,
-      "BackColor": backColor,
-      "ForColor": forColor,
-      "Height": height,
-      "Width": width,
-      "MarkerType": this.chosenShape,
-      "MarkerId": markerId,
-      "LocationX": locationX,
-      "LocationY": locationY
-    })
-  }
-
-
-  makePolyFromResponse(response) {
-    var poly
-    if (response.markerType == 'Ellipse') {
-      poly = new DrawPolyEllipse(response.locationX, response.locationY, response.width, response.height, response.forColor, response.backColor)
-    }
-    else if (response.markerType == 'Rectangle') {
-      poly = new DrawPolyRectangle(response.locationX, response.locationY, response.width, response.height, response.forColor, response.backColor)
-    }
-    return poly
-  }
+  //END SETTERS
 }
 
 

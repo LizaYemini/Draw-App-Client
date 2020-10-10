@@ -36,8 +36,8 @@ export class DrawingComponent implements OnInit {
     this.stickingOutCanvas.nativeElement.height = 500
     this.drawingCanvas.nativeElement.width = 500
     this.drawingCanvas.nativeElement.height = 500
-    this.localDrawingService.updateDocId(this.docId)
-    this.localDrawingService.startDraw(this.drawingCanvas, this.shapeCanvas)
+    //this.localDrawingService.updateDocId(this.docId)
+    this.localDrawingService.startDraw(this.drawingCanvas, this.shapeCanvas, this.docId)
   }
 
   changeShape(chosenShape: string) {

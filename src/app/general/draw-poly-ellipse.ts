@@ -1,9 +1,11 @@
 import { DrawPoly } from './draw-poly';
 
 export class DrawPolyEllipse extends DrawPoly {
+
     constructor(public locationX: number, public locationY: number, public width: number, public height: number,
         public foreColor: string, public backColor: string) {
         super(locationX, locationY, width, height, foreColor, backColor)
+        this.shapeType = "Ellipse"
     }
 
     draw(ctx: any) {
@@ -30,4 +32,5 @@ export class DrawPolyEllipse extends DrawPoly {
         super.stickOut(ctx)
         //ctx.strokeRect(this.locationX, this.locationY, this.width, this.height)
     }
+
 }

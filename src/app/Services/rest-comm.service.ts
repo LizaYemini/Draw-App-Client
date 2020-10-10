@@ -17,7 +17,6 @@ import { RemoveShareRequest } from '../DTO/remove-share-request';
 import { CreateMarkerRequest } from '../DTO/create-marker-request';
 import { GetMarkersRequest } from '../DTO/get-markers-request';
 import { RemoveMarkerRequest } from '../DTO/remove-marker-request';
-import { UpdateMarkerRequest } from '../DTO/update-marker-request';
 
 @Injectable({
   providedIn: 'root'
@@ -92,7 +91,7 @@ export class RestCommService extends CommService {
     return this.http.post("api/GetMarkers", request)
   }
 
-  UpdateMarker(request: UpdateMarkerRequest): Observable<any> {
+  UpdateMarker(request: CreateMarkerRequest): Observable<any> {
     return this.http.post("api/UpdateMarker", request)
   }
 }

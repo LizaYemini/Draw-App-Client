@@ -4,7 +4,6 @@ import { buffer, map, switchMap, takeUntil } from 'rxjs/operators';
 import { CreateMarkerRequest } from '../DTO/create-marker-request';
 import { GetMarkersRequest } from '../DTO/get-markers-request';
 import { RemoveMarkerRequest } from '../DTO/remove-marker-request';
-import { UpdateMarkerRequest } from '../DTO/update-marker-request';
 import { point } from '../general/point';
 import { CommService } from './comm.service';
 
@@ -83,7 +82,7 @@ export class DrawingService {
     )
   }
 
-  UpdateMarker(request: UpdateMarkerRequest) {
+  UpdateMarker(request: CreateMarkerRequest) {
     var obs = this.commService.UpdateMarker(request)
     var obs2 = obs.pipe(
       map(response => {
