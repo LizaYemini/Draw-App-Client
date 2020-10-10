@@ -71,20 +71,22 @@ export class LocalDrawingService {
     this.markerMessangerService.onNewMarkerResponse().subscribe
       (
         response => {
-          console.log(" response in new marker ")
-          console.log(response)
-          var poly = this.markerFactory.makePolyFromMarkerDto(response.marker as MarkerDto)
-          this.handleNewMarker(response.marker.markerId, poly)
-          //console.log(marker.DocId)
+          this.addMarker(response.marker as MarkerDto)
         }
       )
     this.markerMessangerService.onRemoveMarkerResponse().subscribe
       (
-        MarkerDto => {
-          console.log(MarkerDto)
+        response => {
+          this.removeMarker(response.markerId)
         }
       )
 
+    this.markerMessangerService.onUpdateMarkerWebSocketRespose().subscribe
+      (
+        response => {
+          this.addMarker(response.marker as MarkerDto)
+        }
+      )
     this.drawingService.onError().subscribe
       (
         message => {
@@ -94,8 +96,8 @@ export class LocalDrawingService {
     this.drawingService.onCreateMarkerResponseOk().subscribe
       (
         response => {
-          var poly = this.markerFactory.makePolyFromMarkerDto(response.marker as MarkerDto)
-          this.handleNewMarker(response.marker.markerId, poly)
+          //var poly = this.markerFactory.makePolyFromMarkerDto(response.marker as MarkerDto)
+          //this.handleNewMarker(response.marker.markerId, poly)
         }
       )
 
@@ -117,23 +119,17 @@ export class LocalDrawingService {
     this.drawingService.onRemoveMarkerResponseOk().subscribe
       (
         response => {
-          //console.log(MarkerDto)
-          this.responseSubjects.ClearPoly.next(
-            this.allMarkers.get(response.markerId)
-          )
-          //this.onClearDrawingCanvas()
-          this.allMarkers.delete(response.markerId)
-          this.responseSubjects.ClearShapeCanvas.next("")
-          this.drawAllMarkers()
-          console.log("removed marker ok")
+          this.removeMarker(response.markerId)
         }
       )
 
     this.drawingService.onUpdateMarkerResponseOk().subscribe
       (
         response => {
-          var poly = this.markerFactory.makePolyFromMarkerDto(response.marker as MarkerDto)
-          this.handleNewMarker(response.marker.markerId, poly)
+          this.addMarker(response.marker as MarkerDto)
+          //var poly = this.markerFactory.makePolyFromMarkerDto(response.marker as MarkerDto)
+
+          //this.handleNewMarker(response.marker.markerId, poly)
         }
       )
   } // END SUBSCRIBE
@@ -217,8 +213,9 @@ export class LocalDrawingService {
   }
 
 
-  handleNewMarker(markerId: string, poly: DrawPoly) {
-    this.allMarkers.set(markerId, poly)
+  addMarker(marker: MarkerDto) {
+    var poly = this.markerFactory.makePolyFromMarkerDto(marker)
+    this.allMarkers.set(marker.markerId, poly)
     // draw the new marker
     this.responseSubjects.DrawPoly.next(poly)
   }
@@ -254,10 +251,16 @@ export class LocalDrawingService {
     this.UpdateMarkerOnService(marker)
   }
 
-
-
-
-
+  removeMarker(markerId) {
+    console.log(markerId)
+    this.responseSubjects.ClearPoly.next(
+      this.allMarkers.get(markerId)
+    )
+    this.allMarkers.delete(markerId)
+    this.responseSubjects.ClearShapeCanvas.next("")
+    this.drawAllMarkers()
+    console.log("removed marker ok")
+  }
   //START SETTERS
   changeForeColor(color) {
     this.foreColor = color
