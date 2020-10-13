@@ -7,6 +7,7 @@ import { DrawPoly } from '../general/draw-poly';
 import { FreeDrawLine } from '../general/free-draw-line';
 import { point } from '../general/point';
 import { DrawingService } from './drawing.service';
+import { FreeDrawMessangerService } from './free-draw-messanger.service';
 import { MarkerFactoryService } from './marker-factory.service';
 import { MarkerMessangerService } from './marker-messanger.service';
 import { SharedDataService } from './shared-data.service';
@@ -43,8 +44,9 @@ export class LocalDrawingService {
 
   poly: Subject<point>
 
-  constructor(private drawingService: DrawingService, private markerMessangerService: MarkerMessangerService, private sharedDataService: SharedDataService,
-    private markerFactory: MarkerFactoryService) {
+  constructor(private drawingService: DrawingService,
+    private markerMessangerService: MarkerMessangerService, private freeDrawMessangerService: FreeDrawMessangerService,
+    private sharedDataService: SharedDataService, private markerFactory: MarkerFactoryService) {
     markerMessangerService.startSocket()
     this.poly = new Subject<point>()
     this.sharedDataService.currentMessage.subscribe(msg => {
@@ -68,16 +70,33 @@ export class LocalDrawingService {
   }
   // START SUBSCRIBE
   SubscribeOnSubjects() {
+    this.freeDrawMessangerService.onNewLineResponse().subscribe
+      (
+        response => {
+          console.log(response)
+        }
+      )
+    this.freeDrawMessangerService.onClearDrawingCanvasResponse().subscribe
+      (
+        response => {
+          console.log(response)
+        }
+      )
     this.markerMessangerService.onNewMarkerResponse().subscribe
       (
         response => {
-          this.addMarker(response.marker as MarkerDto)
+
+          if (response.marker.docId == this.docId) {
+            this.addMarker(response.marker as MarkerDto)
+          }
         }
       )
     this.markerMessangerService.onRemoveMarkerResponse().subscribe
       (
         response => {
-          this.removeMarker(response.markerId)
+          if (this.allMarkers.has(response.markerId)) {
+            this.removeMarker(response.markerId)
+          }
         }
       )
 
@@ -96,6 +115,7 @@ export class LocalDrawingService {
     this.drawingService.onCreateMarkerResponseOk().subscribe
       (
         response => {
+          this.addMarker(response.marker as MarkerDto)
           //var poly = this.markerFactory.makePolyFromMarkerDto(response.marker as MarkerDto)
           //this.handleNewMarker(response.marker.markerId, poly)
         }
