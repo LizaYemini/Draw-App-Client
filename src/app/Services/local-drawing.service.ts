@@ -55,6 +55,10 @@ export class LocalDrawingService {
     this.SubscribeOnSubjects()
   }
 
+  ngOnDestroy(): void {
+    this.markerMessangerService.endSocket()
+  }
+
   freeDraw(evt) {
     var canvas = this.drawingCanvas.nativeElement
     var rect = canvas.getBoundingClientRect();
@@ -103,7 +107,9 @@ export class LocalDrawingService {
     this.markerMessangerService.onUpdateMarkerWebSocketRespose().subscribe
       (
         response => {
-          this.addMarker(response.marker as MarkerDto)
+          if (response.marker.docId == this.docId) {
+            this.addMarker(response.marker as MarkerDto)
+          }
         }
       )
     this.drawingService.onError().subscribe

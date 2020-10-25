@@ -18,6 +18,7 @@ export class MarkersListComponent implements OnInit {
     console.log("init marker list")
   }
 
+
   onSelect(marker: any): void {
     this.selectedMarker.emit(marker)
     this.selectedMarkerShow = marker

@@ -27,7 +27,6 @@ export class DrawingComponent implements OnInit {
     this.SubscribeOnSubjects()
   }
 
-
   ngAfterViewInit() {
     var ctx1 = this.shapeCanvas.nativeElement.getContext('2d')
     this.shapeCanvas.nativeElement.width = 500
@@ -38,6 +37,10 @@ export class DrawingComponent implements OnInit {
     this.drawingCanvas.nativeElement.height = 500
     //this.localDrawingService.updateDocId(this.docId)
     this.localDrawingService.startDraw(this.drawingCanvas, this.shapeCanvas, this.docId)
+  }
+
+  ngOnDestroy(): void {
+    this.localDrawingService.ngOnDestroy()
   }
 
   changeShape(chosenShape: string) {

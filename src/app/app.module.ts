@@ -29,6 +29,7 @@ import { MarkersListComponent } from './markers-list/markers-list.component';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { LiveWatchersComponent } from './live-watchers/live-watchers.component';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -46,7 +47,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     DocumentsListComponent,
     ConfirmationDialogComponent,
     ShareDocsComponent,
-    MarkersListComponent
+    MarkersListComponent,
+    LiveWatchersComponent
   ],
   imports: [
     BrowserModule,

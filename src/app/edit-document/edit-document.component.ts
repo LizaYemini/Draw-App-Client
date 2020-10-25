@@ -32,12 +32,7 @@ export class EditDocumentComponent implements OnInit {
     "assets/3.jpg",
     "assets/4.jpg"
   ]
-  /*imagesSelect: ImageInfo[] = [
-    { imageUrl: 'assets/1.jpg', name: '1' },
-    { imageUrl: 'assets/2.jpg', name: '2' },
-    { imageUrl: 'assets/3.jpg', name: '3' },
-    { imageUrl: 'assets/4.jpg', name: '4' }
-  ]; */
+
   constructor(sharedDataService: SharedDataService, private documentService: DocumentsService) {
     sharedDataService.currentMessage.subscribe(msg => {
       this.owner = msg
@@ -46,6 +41,9 @@ export class EditDocumentComponent implements OnInit {
     this.SubscribeOnSubjects()
   }
   ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
   }
 
   SubscribeOnSubjects() {

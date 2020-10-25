@@ -17,6 +17,9 @@ import { RemoveShareRequest } from '../DTO/remove-share-request';
 import { CreateMarkerRequest } from '../DTO/create-marker-request';
 import { GetMarkersRequest } from '../DTO/get-markers-request';
 import { RemoveMarkerRequest } from '../DTO/remove-marker-request';
+import { CreateLiveWatchDocRequest } from '../DTO/LiveWatch/create-live-watch-doc-request';
+import { GetWatchersOfDocRequest } from '../DTO/LiveWatch/get-watchers-of-doc-request';
+import { RemoveLiveWatchDocRequest } from '../DTO/LiveWatch/remove-live-watch-doc-request';
 
 @Injectable({
   providedIn: 'root'
@@ -93,5 +96,15 @@ export class RestCommService extends CommService {
 
   UpdateMarker(request: CreateMarkerRequest): Observable<any> {
     return this.http.post("api/UpdateMarker", request)
+  }
+
+  CreateLiveWatchDoc(request: CreateLiveWatchDocRequest): Observable<any> {
+    return this.http.post("api/CurrentlyWatching/CreateLiveWatchDoc", request);
+  }
+  RemoveLiveWatchDoc(request: RemoveLiveWatchDocRequest): Observable<any> {
+    return this.http.post("api/CurrentlyWatching/RemoveLiveWatchDoc", request);
+  }
+  GetWatchersOfDoc(request: GetWatchersOfDocRequest): Observable<any> {
+    return this.http.post("api/CurrentlyWatching/GetWatchersOfDoc", request);
   }
 }

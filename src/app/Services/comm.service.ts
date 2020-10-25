@@ -15,6 +15,9 @@ import { CreateShareRequest } from '../DTO/create-share-request';
 import { CreateMarkerRequest } from '../DTO/create-marker-request';
 import { RemoveMarkerRequest } from '../DTO/remove-marker-request';
 import { GetMarkersRequest } from '../DTO/get-markers-request';
+import { CreateLiveWatchDocRequest } from '../DTO/LiveWatch/create-live-watch-doc-request';
+import { RemoveLiveWatchDocRequest } from '../DTO/LiveWatch/remove-live-watch-doc-request';
+import { GetWatchersOfDocRequest } from '../DTO/LiveWatch/get-watchers-of-doc-request';
 
 @Injectable({
   providedIn: 'root'
@@ -41,4 +44,8 @@ export abstract class CommService {
   abstract RemoveMarker(request: RemoveMarkerRequest): Observable<any>
   abstract GetMarkers(request: GetMarkersRequest): Observable<any>
   abstract UpdateMarker(request: CreateMarkerRequest): Observable<any>
+  //live watch
+  abstract CreateLiveWatchDoc(request: CreateLiveWatchDocRequest): Observable<any>
+  abstract RemoveLiveWatchDoc(request: RemoveLiveWatchDocRequest): Observable<any>
+  abstract GetWatchersOfDoc(request: GetWatchersOfDocRequest): Observable<any>
 }
